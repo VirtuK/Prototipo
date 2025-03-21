@@ -37,7 +37,7 @@ public class Board : MonoBehaviour
                 rowComponent.tiles[j].icon.sprite = items[rdn].sprite;
             }
         }
-        CheckForMatches();
+        //if(CheckForMatches()) HandleMatches();
     }
 
     public void SelectTile(Tile tile)
@@ -50,20 +50,12 @@ public class Board : MonoBehaviour
         {
             if (AreAdjacent(selectedTile, tile))
             {
-                SwapItems(selectedTile, tile);
-                if (!CheckForMatches())
-                {
-                    SwapItems(selectedTile, tile);
-                    print("dont");
-                }
-                else
-                {
-                    HandleMatches();
-                }
+                StartCoroutine(SwapAndCheck(selectedTile, tile));
             }
             selectedTile = null;
         }
     }
+
 
     private bool AreAdjacent(Tile tile1, Tile tile2)
     {
@@ -71,14 +63,39 @@ public class Board : MonoBehaviour
                (Mathf.Abs(tile1.column - tile2.column) == 1 && tile1.row == tile2.row);
     }
 
-    private void SwapItems(Tile tile1, Tile tile2)
+    private IEnumerator SwapItems(Tile tile1, Tile tile2)
     {
         Item tempItem = tile1.item;
         tile1.item = tile2.item;
         tile2.item = tempItem;
 
-        tile1.icon.sprite = tile1.item.sprite;
-        tile2.icon.sprite = tile2.item.sprite;
+        Sprite tempSprite = tile1.icon.sprite;
+        tile1.icon.sprite = tile2.icon.sprite;
+        tile2.icon.sprite = tempSprite;
+
+        RectTransform icon1Transform = tile1.icon.GetComponent<RectTransform>();
+        RectTransform icon2Transform = tile2.icon.GetComponent<RectTransform>();
+
+        Vector3 icon1StartPos = icon1Transform.anchoredPosition;
+        Vector3 icon2StartPos = icon2Transform.anchoredPosition;
+
+        float duration = 0.3f; 
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            icon1Transform.anchoredPosition = Vector3.Lerp(icon1StartPos, icon2StartPos, t);
+            icon2Transform.anchoredPosition = Vector3.Lerp(icon2StartPos, icon1StartPos, t);
+            yield return null;
+        }
+
+        icon1Transform.anchoredPosition = icon2StartPos;
+        icon2Transform.anchoredPosition = icon1StartPos;
+
+        icon1Transform.anchoredPosition = Vector3.zero;
+        icon2Transform.anchoredPosition = Vector3.zero;
     }
 
     private bool CheckForMatches()
@@ -136,12 +153,28 @@ public class Board : MonoBehaviour
         return matchFound;
     }
 
-   private void HandleMatches()
+    private IEnumerator SwapAndCheck(Tile tile1, Tile tile2)
+    {
+        yield return StartCoroutine(SwapItems(tile1, tile2));
+        if (!CheckForMatches())
+        {
+            yield return StartCoroutine(SwapItems(tile1, tile2));
+            Debug.Log("No match found, swapping back.");
+        }
+        else
+        {
+            // Handle matches
+            HandleMatches();
+        }
+    }
+
+    private void HandleMatches()
     {
         ClearMatches();
         ShiftTilesDown();
         RefillBoard();
-        CheckForMatches();
+
+
     }
 
     private void ClearMatches()
@@ -167,36 +200,62 @@ public class Board : MonoBehaviour
             {
                 if (rows[row].tiles[col].item == null)
                 {
-                    for (int k = row - 1; k >= 0; k--)
+                    for (int k = row; k > 0; k--)
                     {
-                        if (rows[k].tiles[col].item != null)
-                        {
-                            rows[row].tiles[col].item = rows[k].tiles[col].item;
-                            rows[row].tiles[col].icon.sprite = rows[k].tiles[col].icon.sprite;
+                        Tile upperTile = rows[k - 1].tiles[col];
+                        Tile currentTile = rows[k].tiles[col];
 
-                            rows[k].tiles[col].item = null;
-                            rows[k].tiles[col].icon.sprite = null;
-                            break;
-                        }
+                        currentTile.item = upperTile.item;
+                        currentTile.icon.sprite = upperTile.icon.sprite;
+                        upperTile.item = null;
+                        upperTile.icon.sprite = null;
                     }
                 }
             }
         }
     }
 
+
     private void RefillBoard()
     {
-        for (int i = 0; i < width; i++)
+        for (int col = 0; col < length; col++)
         {
-            for (int j = 0; j < length; j++)
+            for (int row = 0; row < width; row++)
             {
-                if (rows[i].tiles[j].item == null)
+                if (rows[row].tiles[col].item == null)
                 {
                     int rdn = Random.Range(0, items.Length);
-                    rows[i].tiles[j].item = items[rdn];
-                    rows[i].tiles[j].icon.sprite = items[rdn].sprite;
+                    rows[row].tiles[col].item = items[rdn];
+                    rows[row].tiles[col].icon.sprite = items[rdn].sprite;
+
+                    StartCoroutine(AnimateNewTile(rows[row].tiles[col]));
+
+                    //if (CheckForMatches()) HandleMatches();
                 }
             }
         }
+    }
+
+
+    private IEnumerator AnimateNewTile(Tile tile)
+    {
+        Vector3 originalScale = tile.transform.localScale;
+        tile.transform.localScale = Vector3.zero;
+
+        float duration = 0.3f; 
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            tile.transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, t);
+            yield return null;
+        }
+
+        tile.transform.localScale = originalScale;
+
+        yield return new WaitForSeconds(0.2f);
+        
     }
 }
