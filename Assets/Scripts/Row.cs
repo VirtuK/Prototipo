@@ -8,9 +8,13 @@ public class Row : MonoBehaviour
     [SerializeField] private GameObject tilePrefab;
     public List<Tile> tiles = new List<Tile>();
 
-    public void CreateTile()
+    public void CreateTile(int width, int lenght)
     {
         GameObject tile = Instantiate(tilePrefab, this.transform);
         tiles.Add(tile.GetComponent<Tile>());
+        Tile component = tile.GetComponent<Tile>();
+        component.row = width;
+        component.column = lenght;
+        Debug.Log("criou"); 
     }
 }

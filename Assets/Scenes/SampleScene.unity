@@ -344,11 +344,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1de829cd505529419e4b4a40cfbdbed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items: []
+  items:
+  - {fileID: 11400000, guid: a96b416ecd387124bb767250316c6d12, type: 2}
+  - {fileID: 11400000, guid: 5a1a490e36d3c19408eced78f73981f2, type: 2}
+  - {fileID: 11400000, guid: e1b31649712cd8044a28d4254cd97f00, type: 2}
+  - {fileID: 11400000, guid: b56694d9b97fb274f85f5bbcdbab62ad, type: 2}
+  - {fileID: 11400000, guid: 0393672dce5cd7b4ca154a58f92129fa, type: 2}
+  - {fileID: 11400000, guid: 27dadcd8e45fec74394fb2264b90245e, type: 2}
+  - {fileID: 11400000, guid: a739279974acd104ca28263252abc2e9, type: 2}
   rows: []
   RowPrefab: {fileID: 6666342839829760976, guid: e67a0b876ca18db47a0798cbcc17c815, type: 3}
+  selectedTile: {fileID: 0}
   width: 5
-  lenght: 3
+  length: 5
 --- !u!1 &1790292940
 GameObject:
   m_ObjectHideFlags: 0
