@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
     [SerializeField] private Item[] items;
     [SerializeField] private List<Row> rows = new List<Row>();
     [SerializeField] private GameObject RowPrefab;
+    [SerializeField] private TMP_Text scoreText;
 
     public Tile selectedTile;
 
@@ -16,13 +18,21 @@ public class Board : MonoBehaviour
     public int width;
     public int length;
 
+    public int score;
+    public int scoreGoal;
+
     private void Start()
     {
         GenerateBoard();
+        
     }
 
     private void GenerateBoard()
     {
+        score = 0;
+        scoreGoal = 0;
+        scoreGoal = Random.Range(1, 10);
+        scoreGoal *= 10;
         for (int i = 1; i <= width; i++)
         {
             GameObject row = Instantiate(RowPrefab, this.transform);
@@ -37,7 +47,29 @@ public class Board : MonoBehaviour
                 rowComponent.tiles[j].icon.sprite = items[rdn].sprite;
             }
         }
-        //if(CheckForMatches()) HandleMatches();
+        if(CheckForMatches()) ResetBoard();
+    }
+
+    private void Update()
+    {
+        scoreText.text = "Score: " + score + "/" + scoreGoal;
+       
+    }
+    private void ResetBoard()
+    {
+        for(int i = 0; i < rows.Count; i++)
+        {
+            for(int j = 0; j < rows[i].tiles.Count; j++)
+            {
+                Destroy(rows[i].tiles[j].gameObject);
+            }
+            rows[i].tiles.Clear();
+            Destroy(rows[i].gameObject);
+        }
+        rows.Clear();
+        GenerateBoard();
+        Debug.Log("Foi reiniciado");
+
     }
 
     public void SelectTile(Tile tile)
@@ -185,6 +217,7 @@ public class Board : MonoBehaviour
             {
                 if (rows[i].tiles[j].isMatched)
                 {
+                    score += rows[i].tiles[j].item.points;
                     rows[i].tiles[j].item = null;
                     rows[i].tiles[j].icon.sprite = null;
                 }
@@ -229,8 +262,8 @@ public class Board : MonoBehaviour
                     rows[row].tiles[col].icon.sprite = items[rdn].sprite;
 
                     StartCoroutine(AnimateNewTile(rows[row].tiles[col]));
-
-                    //if (CheckForMatches()) HandleMatches();
+                    StartCoroutine(WaitAndCheck());
+                    
                 }
             }
         }
@@ -254,8 +287,17 @@ public class Board : MonoBehaviour
         }
 
         tile.transform.localScale = originalScale;
-
-        yield return new WaitForSeconds(0.2f);
         
+
+    }
+
+    private IEnumerator WaitAndCheck()
+    {
+        yield return new WaitForSeconds(1);
+        if (CheckForMatches()) HandleMatches();
+        if (score >= scoreGoal)
+        {
+            ResetBoard();
+        }
     }
 }
