@@ -11,6 +11,9 @@ public class Board : MonoBehaviour
     [SerializeField] private List<Row> rows = new List<Row>();
     [SerializeField] private GameObject RowPrefab;
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private GameObject pointsTextPrefab;
+
+    private List<GameObject> pointsText = new List<GameObject>();
 
     public Tile selectedTile;
 
@@ -200,7 +203,7 @@ public class Board : MonoBehaviour
         }
         else
         {
-            // Handle matches
+            
             HandleMatches();
         }
     }
@@ -222,7 +225,13 @@ public class Board : MonoBehaviour
             {
                 if (rows[i].tiles[j].isMatched)
                 {
-                    score += rows[i].tiles[j].item.points;
+                    if (rows[i].tiles[j].item != null) 
+                    {
+                        score += rows[i].tiles[j].item.points;
+                        GameObject points = Instantiate(pointsTextPrefab, rows[i].tiles[j].gameObject.transform);
+                        points.GetComponent<TMP_Text>().text = "+" + rows[i].tiles[j].item.points;
+                        pointsText.Add(points);
+                    }
                     rows[i].tiles[j].item = null;
                     rows[i].tiles[j].icon.sprite = null;
                 }
@@ -308,7 +317,17 @@ public class Board : MonoBehaviour
             RegenerateNewTiles(newTiles);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.3f);
+
+        for (int i = 0; i < pointsText.Count; i++)
+        {
+            Destroy(pointsText[i]);
+        }
+        pointsText.Clear();
+
+        yield return new WaitForSeconds(0.8f);
+
+       
 
         if (CheckForMatches())
         {

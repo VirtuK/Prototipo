@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 266987667}
   - component: {fileID: 266987666}
   m_Layer: 5
-  m_Name: Score
+  m_Name: Score_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -489,6 +489,7 @@ MonoBehaviour:
   rows: []
   RowPrefab: {fileID: 6666342839829760976, guid: e67a0b876ca18db47a0798cbcc17c815, type: 3}
   scoreText: {fileID: 266987666}
+  pointsTextPrefab: {fileID: 2835970526099478549, guid: 0571a1bf6c9c2204f88296b5481f7ceb, type: 3}
   selectedTile: {fileID: 0}
   width: 5
   length: 5
