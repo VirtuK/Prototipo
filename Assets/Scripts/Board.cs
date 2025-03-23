@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Board : MonoBehaviour
@@ -11,9 +12,12 @@ public class Board : MonoBehaviour
     [SerializeField] private List<Row> rows = new List<Row>();
     [SerializeField] private GameObject RowPrefab;
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text movesText;
     [SerializeField] private GameObject pointsTextPrefab;
 
     private List<GameObject> pointsText = new List<GameObject>();
+    private int scoreMax;
+    private int numberOfMoves;
 
     public Tile selectedTile;
 
@@ -26,6 +30,10 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
+        width = LevelManager.instance.widthInput;
+        length = LevelManager.instance.lengthInput;
+        scoreMax = LevelManager.instance.scoreMax;
+        numberOfMoves = LevelManager.instance.maxNumberOfMoves;
         GenerateBoard();
         
     }
@@ -34,8 +42,12 @@ public class Board : MonoBehaviour
     {
         score = 0;
         scoreGoal = 0;
-        scoreGoal = Random.Range(1, 10);
+        scoreGoal = Random.Range(1, scoreMax);
         scoreGoal *= 10;
+        if(LevelManager.instance.customScore > 0)
+        {
+            scoreGoal = LevelManager.instance.customScore;
+        }
         for (int i = 1; i <= width; i++)
         {
             GameObject row = Instantiate(RowPrefab, this.transform);
@@ -59,6 +71,7 @@ public class Board : MonoBehaviour
     private void Update()
     {
         scoreText.text = "Score: " + score + "/" + scoreGoal;
+        movesText.text = "Moves Left: " + numberOfMoves;
        
     }
     private void ResetBoard()
@@ -327,7 +340,7 @@ public class Board : MonoBehaviour
 
         yield return new WaitForSeconds(0.8f);
 
-       
+        numberOfMoves--;
 
         if (CheckForMatches())
         {
@@ -335,9 +348,9 @@ public class Board : MonoBehaviour
         }
         
 
-        if (score >= scoreGoal)
+        if (score >= scoreGoal || numberOfMoves <= 0)
         {
-            ResetBoard();
+            SceneManager.LoadScene("Menu");
         }
     }
 
