@@ -47,7 +47,10 @@ public class Board : MonoBehaviour
                 rowComponent.tiles[j].icon.sprite = items[rdn].sprite;
             }
         }
-        if(CheckForMatches()) ResetBoard();
+        if (CheckForMatches() || !HasPossibleMoves()) 
+        { 
+            ResetBoard(); 
+        }
     }
 
     private void Update()
@@ -57,7 +60,9 @@ public class Board : MonoBehaviour
     }
     private void ResetBoard()
     {
-        for(int i = 0; i < rows.Count; i++)
+        StopAllCoroutines();
+
+        for (int i = 0; i < rows.Count; i++)
         {
             for(int j = 0; j < rows[i].tiles.Count; j++)
             {
@@ -251,6 +256,8 @@ public class Board : MonoBehaviour
 
     private void RefillBoard()
     {
+        List<Tile> newTiles = new List<Tile>();
+
         for (int col = 0; col < length; col++)
         {
             for (int row = 0; row < width; row++)
@@ -261,12 +268,13 @@ public class Board : MonoBehaviour
                     rows[row].tiles[col].item = items[rdn];
                     rows[row].tiles[col].icon.sprite = items[rdn].sprite;
 
+                    newTiles.Add(rows[row].tiles[col]); 
                     StartCoroutine(AnimateNewTile(rows[row].tiles[col]));
-                    StartCoroutine(WaitAndCheck());
-                    
                 }
             }
         }
+
+        StartCoroutine(WaitAndCheck(newTiles));
     }
 
 
@@ -291,13 +299,114 @@ public class Board : MonoBehaviour
 
     }
 
-    private IEnumerator WaitAndCheck()
+    private IEnumerator WaitAndCheck(List<Tile> newTiles)
     {
+
+        if (!HasPossibleMoves())
+        {
+            Debug.Log("No possible moves! Re-randomizing new tiles...");
+            RegenerateNewTiles(newTiles);
+        }
+
         yield return new WaitForSeconds(1);
-        if (CheckForMatches()) HandleMatches();
+
+        if (CheckForMatches())
+        {
+            HandleMatches();
+        }
+        
+
         if (score >= scoreGoal)
         {
             ResetBoard();
+        }
+    }
+
+    private bool HasPossibleMoves()
+    {
+        for (int row = 0; row < width; row++)
+        {
+            for (int col = 0; col < length; col++)
+            {
+                Tile currentTile = rows[row].tiles[col];
+
+                if (col < length - 1)
+                {
+                    Tile rightTile = rows[row].tiles[col + 1];
+                    SwapTiles(currentTile, rightTile);
+                    if (CheckForMatches())
+                    {
+                        SwapTiles(currentTile, rightTile);
+                        return true;
+                    }
+                    SwapTiles(currentTile, rightTile);
+                }
+
+                if (col > 0)
+                {
+                    Tile leftTile = rows[row].tiles[col - 1];
+                    SwapTiles(currentTile, leftTile);
+                    if (CheckForMatches())
+                    {
+                        SwapTiles(currentTile, leftTile);
+                        return true;
+                    }
+                    SwapTiles(currentTile, leftTile);
+                }
+
+                if (row < width - 1)
+                {
+                    Tile bottomTile = rows[row + 1].tiles[col];
+                    SwapTiles(currentTile, bottomTile);
+                    if (CheckForMatches())
+                    {
+                        SwapTiles(currentTile, bottomTile);
+                        return true;
+                    }
+                    SwapTiles(currentTile, bottomTile);
+                }
+
+                if (row > 0)
+                {
+                    Tile topTile = rows[row - 1].tiles[col];
+                    SwapTiles(currentTile, topTile);
+                    if (CheckForMatches())
+                    {
+                        SwapTiles(currentTile, topTile);
+                        return true;
+                    }
+                    SwapTiles(currentTile, topTile);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void SwapTiles(Tile tile1, Tile tile2)
+    {
+        Item tempItem = tile1.item;
+        tile1.item = tile2.item;
+        tile2.item = tempItem;
+
+        Sprite tempSprite = tile1.icon.sprite;
+        tile1.icon.sprite = tile2.icon.sprite;
+        tile2.icon.sprite = tempSprite;
+    }
+
+    private void RegenerateNewTiles(List<Tile> newTiles)
+    {
+        foreach (Tile tile in newTiles)
+        {
+            int rdn = Random.Range(0, items.Length);
+            tile.item = items[rdn];
+            tile.icon.sprite = items[rdn].sprite;
+        }
+
+        if (!HasPossibleMoves())
+        {
+            Debug.Log("Still no moves! Regenerating new tiles again...");
+            RegenerateNewTiles(newTiles);
         }
     }
 }
