@@ -122,7 +122,6 @@ public class TileManager : MonoBehaviour
                     if (tile.item != null)
                     {
                         boardManager.AddScore(tile.item.points);
-                        // Instantiate feedback text.
                         GameObject pt = Instantiate(pointsTextPrefab, tile.transform);
                         pt.GetComponent<TMP_Text>().text = "+" + tile.item.points;
                         pointsText.Add(pt);
@@ -183,7 +182,6 @@ public class TileManager : MonoBehaviour
 
     private IEnumerator WaitAndCheck(List<Tile> newTiles)
     {
-        // If there are no possible moves, re-randomize the new tiles.
         if (!HasPossibleMoves(boardManager.GetRows(), boardManager.width, boardManager.length))
         {
             Debug.Log("No possible moves! Re-randomizing new tiles...");
@@ -191,7 +189,6 @@ public class TileManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.3f);
 
-        // Clean up temporary UI feedback.
         foreach (var pt in pointsText)
         {
             Destroy(pt);
@@ -282,5 +279,69 @@ public class TileManager : MonoBehaviour
             Debug.Log("Still no moves! Regenerating new tiles again...");
             RegenerateNewTiles(newTiles);
         }
+    }
+
+    public (Tile, Tile)? FindValidMove()
+    {
+        List<Row> rows = boardManager.GetRows();
+        int width = boardManager.width;
+        int length = boardManager.length;
+
+        for (int row = 0; row < width; row++)
+        {
+            for (int col = 0; col < length; col++)
+            {
+                Tile currentTile = rows[row].tiles[col];
+
+                if (col < length - 1)
+                {
+                    Tile rightTile = rows[row].tiles[col + 1];
+                    GameUtilities.SwapTiles(currentTile, rightTile);
+                    if (CheckForMatches())
+                    {
+                        GameUtilities.SwapTiles(currentTile, rightTile);
+                        return (currentTile, rightTile);
+                    }
+                    GameUtilities.SwapTiles(currentTile, rightTile);
+                }
+                
+                if (col > 0)
+                {
+                    Tile leftTile = rows[row].tiles[col - 1];
+                    GameUtilities.SwapTiles(currentTile, leftTile);
+                    if (CheckForMatches())
+                    {
+                        GameUtilities.SwapTiles(currentTile, leftTile);
+                        return (currentTile, leftTile);
+                    }
+                    GameUtilities.SwapTiles(currentTile, leftTile);
+                }
+                
+                if (row < width - 1)
+                {
+                    Tile bottomTile = rows[row + 1].tiles[col];
+                    GameUtilities.SwapTiles(currentTile, bottomTile);
+                    if (CheckForMatches())
+                    {
+                        GameUtilities.SwapTiles(currentTile, bottomTile);
+                        return (currentTile, bottomTile);
+                    }
+                    GameUtilities.SwapTiles(currentTile, bottomTile);
+                }
+               
+                if (row > 0)
+                {
+                    Tile topTile = rows[row - 1].tiles[col];
+                    GameUtilities.SwapTiles(currentTile, topTile);
+                    if (CheckForMatches())
+                    {
+                        GameUtilities.SwapTiles(currentTile, topTile);
+                        return (currentTile, topTile);
+                    }
+                    GameUtilities.SwapTiles(currentTile, topTile);
+                }
+            }
+        }
+        return null;
     }
 }

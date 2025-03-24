@@ -6,15 +6,16 @@ public class AnimationController : MonoBehaviour
 {
     public IEnumerator SwapItems(Tile tile1, Tile tile2)
     {
-        // Swap the item data.
         Item tempItem = tile1.item;
         tile1.item = tile2.item;
         tile2.item = tempItem;
 
-        // Swap the visual sprites.
         Sprite tempSprite = tile1.icon.sprite;
         tile1.icon.sprite = tile2.icon.sprite;
         tile2.icon.sprite = tempSprite;
+
+        tile1.ClearHintAnimation();
+        tile2.ClearHintAnimation();
 
         RectTransform icon1Transform = tile1.icon.GetComponent<RectTransform>();
         RectTransform icon2Transform = tile2.icon.GetComponent<RectTransform>();
