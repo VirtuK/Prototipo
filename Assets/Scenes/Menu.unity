@@ -339,6 +339,7 @@ MonoBehaviour:
   columns: 10
   scoreMax: 15
   maxNumberOfMoves: 20
+  customScore: 0
   buttons: {fileID: 0}
   custom: {fileID: 0}
   rowsInput: {fileID: 0}
@@ -1026,6 +1027,7 @@ MonoBehaviour:
   columns: 7
   scoreMax: 60
   maxNumberOfMoves: 15
+  customScore: 0
   buttons: {fileID: 0}
   custom: {fileID: 0}
   rowsInput: {fileID: 0}
@@ -1812,6 +1814,7 @@ MonoBehaviour:
   columns: 0
   scoreMax: 0
   maxNumberOfMoves: 0
+  customScore: 0
   buttons: {fileID: 49912345}
   custom: {fileID: 511005598}
   rowsInput: {fileID: 0}
@@ -2103,6 +2106,7 @@ MonoBehaviour:
   columns: 0
   scoreMax: 0
   maxNumberOfMoves: 0
+  customScore: 0
   buttons: {fileID: 49912345}
   custom: {fileID: 511005598}
   rowsInput: {fileID: 0}
@@ -2638,6 +2642,7 @@ MonoBehaviour:
   lengthInput: 0
   scoreMax: 0
   maxNumberOfMoves: 0
+  customScore: 0
 --- !u!4 &970876233
 Transform:
   m_ObjectHideFlags: 0
@@ -4069,6 +4074,7 @@ MonoBehaviour:
   columns: 0
   scoreMax: 0
   maxNumberOfMoves: 0
+  customScore: 0
   buttons: {fileID: 0}
   custom: {fileID: 0}
   rowsInput: {fileID: 105255747}
@@ -5005,6 +5011,7 @@ MonoBehaviour:
   columns: 5
   scoreMax: 40
   maxNumberOfMoves: 10
+  customScore: 0
   buttons: {fileID: 0}
   custom: {fileID: 0}
   rowsInput: {fileID: 0}

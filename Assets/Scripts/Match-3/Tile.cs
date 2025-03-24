@@ -11,15 +11,15 @@ public class Tile : MonoBehaviour
     public Item item;
     public Image icon;
     public bool isMatched;
-    private Board board;
+    private TileManager tileManager;
 
     private void Start()
     {
-        board = FindObjectOfType<Board>();
+        tileManager = FindObjectOfType<TileManager>();
     }
 
     public void Select()
     {
-        board.SelectTile(this);
+        tileManager.SelectTile(this);
     }
 }
