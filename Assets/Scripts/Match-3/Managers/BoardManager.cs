@@ -22,6 +22,7 @@ public class BoardManager : MonoBehaviour
     [Header("References")]
     public TileManager tileManager;
     public UIManager uiManager;
+    public GameUiButtons gameUiButtons;
 
     private List<Row> rows = new List<Row>();
 
@@ -88,9 +89,13 @@ public class BoardManager : MonoBehaviour
     public void DecrementMoves()
     {
         numberOfMoves--;
-        if (score >= scoreGoal || numberOfMoves <= 0)
+        if (score >= scoreGoal)
         {
-            SceneManager.LoadScene("Menu");
+            gameUiButtons.VictoryScreen(score);
+        }
+        else if(numberOfMoves <= 0)
+        {
+            gameUiButtons.GameOverScreen(score);
         }
     }
 
