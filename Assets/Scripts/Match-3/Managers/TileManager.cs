@@ -53,6 +53,7 @@ public class TileManager : MonoBehaviour
         {
             StartCoroutine(HandleMatches());
         }
+        boardManager.DecrementMoves();
     }
 
     // Verifica se há combinações no tabuleiro
@@ -215,7 +216,7 @@ public class TileManager : MonoBehaviour
         pointsText.Clear();
 
         yield return new WaitForSeconds(0.8f);
-        boardManager.DecrementMoves();
+        
 
         if (CheckForMatches())
         {
