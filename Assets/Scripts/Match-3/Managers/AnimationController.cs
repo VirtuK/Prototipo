@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AnimationController : MonoBehaviour
 {
+    // Coroutine que realiza a troca de itens entre duas peças com uma animação suave.
     public IEnumerator SwapItems(Tile tile1, Tile tile2)
     {
         Item tempItem = tile1.item;
@@ -16,7 +17,7 @@ public class AnimationController : MonoBehaviour
 
         HintManager hintManager = GameObject.FindObjectOfType<HintManager>();
         hintManager.ResetTimer();
-        
+
         RectTransform icon1Transform = tile1.icon.GetComponent<RectTransform>();
         RectTransform icon2Transform = tile2.icon.GetComponent<RectTransform>();
 
@@ -25,6 +26,7 @@ public class AnimationController : MonoBehaviour
 
         float duration = 0.3f;
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -33,18 +35,23 @@ public class AnimationController : MonoBehaviour
             icon2Transform.anchoredPosition = Vector3.Lerp(icon2StartPos, icon1StartPos, t);
             yield return null;
         }
+
         icon1Transform.anchoredPosition = icon2StartPos;
         icon2Transform.anchoredPosition = icon1StartPos;
         icon1Transform.anchoredPosition = Vector3.zero;
         icon2Transform.anchoredPosition = Vector3.zero;
     }
 
+    // Coroutine que anima a aparição de uma nova peça escalando-a do zero até seu tamanho original.
     public IEnumerator AnimateNewTile(Tile tile)
     {
         Vector3 originalScale = tile.transform.localScale;
+
         tile.transform.localScale = Vector3.zero;
+
         float duration = 0.3f;
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -52,6 +59,7 @@ public class AnimationController : MonoBehaviour
             tile.transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, t);
             yield return null;
         }
+
         tile.transform.localScale = originalScale;
     }
 }

@@ -3,10 +3,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UIElements;
+
 public class BoardManager : MonoBehaviour
 {
-
-
     [Header("Board Setup")]
     [SerializeField] private Item[] items;
     [SerializeField] private GameObject rowPrefab;
@@ -20,12 +19,13 @@ public class BoardManager : MonoBehaviour
     private int scoreMax;
 
     [Header("References")]
-    public TileManager tileManager;
-    public UIManager uiManager;
-    public GameUiButtons gameUiButtons;
+    [SerializeField] private TileManager tileManager;
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private GameUiButtons gameUiButtons;
 
     private List<Row> rows = new List<Row>();
 
+    // Inicializa as configurações do tabuleiro e gera o tabuleiro do jogo
     private void Start()
     {
         width = LevelManager.instance.widthInput;
@@ -39,7 +39,8 @@ public class BoardManager : MonoBehaviour
         GenerateBoard();
     }
 
-    public void GenerateBoard()
+    // Cria o tabuleiro gerando as linhas e tiles, atribuindo itens aleatórios a cada tile
+    private void GenerateBoard()
     {
         score = 0;
         for (int i = 1; i <= width; i++)
@@ -63,7 +64,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void ResetBoard()
+    // Reinicia o tabuleiro destruindo os tiles atuais e gerando um novo tabuleiro
+    private void ResetBoard()
     {
         StopAllCoroutines();
         foreach (Row row in rows)
@@ -80,12 +82,14 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Board has been reset");
     }
 
+    // Atualiza a interface do usuário com a pontuação e o número de movimentos restantes
     private void Update()
     {
         uiManager.UpdateScoreText(score, scoreGoal);
         uiManager.UpdateMovesText(numberOfMoves);
     }
 
+    // Decrementa o número de movimentos e verifica se o jogador venceu ou perdeu
     public void DecrementMoves()
     {
         numberOfMoves--;
@@ -93,22 +97,25 @@ public class BoardManager : MonoBehaviour
         {
             gameUiButtons.VictoryScreen(score);
         }
-        else if(numberOfMoves <= 0)
+        else if (numberOfMoves <= 0)
         {
             gameUiButtons.GameOverScreen(score);
         }
     }
 
+    // Adiciona pontos ao placar
     public void AddScore(int points)
     {
         score += points;
     }
 
+    // Retorna a lista de linhas do tabuleiro
     public List<Row> GetRows()
     {
         return rows;
     }
 
+    // Retorna a lista de itens disponíveis no jogo
     public Item[] GetItems()
     {
         return items;

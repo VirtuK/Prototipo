@@ -5,15 +5,18 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
-    public BoardManager boardManager;
-    public AnimationController animController;
-    public UIManager uiManager;
-
+    [Header("Points Text Settings")]
     [SerializeField] private GameObject pointsTextPrefab;
     [SerializeField] private List<GameObject> pointsText = new List<GameObject>();
 
-    public Tile selectedTile;
+    [Header("Selected Tile")]
+    private Tile selectedTile;
 
+    [Header("References")]
+    [SerializeField] private AnimationController animController;
+    public BoardManager boardManager;
+
+    // Seleciona uma peça e ativa a verificação caso já tiver uma peça selecionada
     public void SelectTile(Tile tile)
     {
         if (selectedTile == null)
@@ -37,6 +40,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    // Troca as peças e verifica se há combinações
     private IEnumerator SwapAndCheck(Tile tile1, Tile tile2)
     {
         yield return StartCoroutine(animController.SwapItems(tile1, tile2));
@@ -51,6 +55,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    // Verifica se há combinações no tabuleiro
     public bool CheckForMatches(List<Row> rows, int width, int length)
     {
         bool matchFound = false;
@@ -104,12 +109,14 @@ public class TileManager : MonoBehaviour
         return matchFound;
     }
 
+    // Retorna o resultado da verificação
     public bool CheckForMatches()
     {
         return CheckForMatches(boardManager.GetRows(), boardManager.width, boardManager.length);
     }
 
-    public IEnumerator HandleMatches()
+    // Lida com as combinações, limpando e reorganizando o tabuleiro
+    private IEnumerator HandleMatches()
     {
         ClearMatches();
         yield return new WaitForSeconds(0.01f);
@@ -117,6 +124,7 @@ public class TileManager : MonoBehaviour
         RefillBoard();
     }
 
+    // Limpa as peças combinadas, cria o texto de pontos delas e adiciona os pontos no score
     private void ClearMatches()
     {
         List<Row> rows = boardManager.GetRows();
@@ -142,6 +150,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    // Move as peças que possuem espaços vazios abaixo delas para baixo
     private void ShiftTilesDown()
     {
         List<Row> rows = boardManager.GetRows();
@@ -166,6 +175,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    // Preenche o tabuleiro com novas peças
     private void RefillBoard()
     {
         List<Row> rows = boardManager.GetRows();
@@ -189,6 +199,7 @@ public class TileManager : MonoBehaviour
         StartCoroutine(WaitAndCheck(newTiles));
     }
 
+    // Aguarda e verifica se há movimentos possíveis, também limpa os textos de pontos da tela
     private IEnumerator WaitAndCheck(List<Tile> newTiles)
     {
         if (!HasPossibleMoves(boardManager.GetRows(), boardManager.width, boardManager.length))
@@ -213,6 +224,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    // Verifica se há movimentos possíveis no tabuleiro
     public bool HasPossibleMoves(List<Row> rows, int width, int length)
     {
         for (int row = 0; row < width; row++)
@@ -270,11 +282,13 @@ public class TileManager : MonoBehaviour
         return false;
     }
 
+    //Retorna o resultado da verificação
     public bool HasPossibleMoves()
     {
         return HasPossibleMoves(boardManager.GetRows(), boardManager.width, boardManager.length);
     }
 
+    //Recria as novas peças do tabuleiro e garante que sempre tenha uma combinação possivel pelo menos
     private void RegenerateNewTiles(List<Tile> newTiles)
     {
         foreach (Tile tile in newTiles)
@@ -290,6 +304,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    //Verifica se existe algum movimento válido no jogo
     public (Tile, Tile)? FindValidMove()
     {
         List<Row> rows = boardManager.GetRows();
