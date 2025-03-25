@@ -141,7 +141,6 @@ public class TileManager : MonoBehaviour
                         GameObject pt = Instantiate(pointsTextPrefab, tile.transform);
                         pt.GetComponent<TMP_Text>().text = "+" + tile.item.points;
                         pointsText.Add(pt);
-                        Debug.Log("Score created");
                     }
                     tile.item = null;
                     tile.icon.sprite = null;
