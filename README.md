@@ -82,7 +82,7 @@ O tabuleiro é composto por diversas peças como esta:
 
 ![Peça do Jogo](https://github.com/user-attachments/assets/eec0f7ae-2fa5-494f-9336-0074060e701c)  
 
-Essas são as peças que devem ser combinadas para ganhar pontos. Neste protótipo, existem **7 variações de peças**, cada uma com um ícone distinto e um valor de pontuação específico. _(Como criar novas peças será abordado na seção "Documentação do Código")_.  
+Essas são as peças que devem ser combinadas para ganhar pontos. Neste protótipo, existem **7 variações de peças**, cada uma com um ícone distinto e um valor de pontuação específico. _(É possivel gerar infinitas peças diferentes a partir do script Item.cs)_.  
 
 Quando o jogador seleciona uma peça, seu fundo muda de cor para indicar a seleção:  
 
