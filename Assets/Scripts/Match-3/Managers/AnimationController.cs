@@ -14,9 +14,9 @@ public class AnimationController : MonoBehaviour
         tile1.icon.sprite = tile2.icon.sprite;
         tile2.icon.sprite = tempSprite;
 
-        tile1.ClearHintAnimation();
-        tile2.ClearHintAnimation();
-
+        HintManager hintManager = GameObject.FindObjectOfType<HintManager>();
+        hintManager.ResetTimer();
+        
         RectTransform icon1Transform = tile1.icon.GetComponent<RectTransform>();
         RectTransform icon2Transform = tile2.icon.GetComponent<RectTransform>();
 

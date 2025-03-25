@@ -67,4 +67,14 @@ public class Tile : MonoBehaviour
             }
         }
     }
+
+    public void HighlightSelect()
+    {
+        GetComponent<Image>().color = Color.red;
+    }
+
+    public void ResetHighlight()
+    {
+        GetComponent<Image>().color = Color.white;
+    }
 }

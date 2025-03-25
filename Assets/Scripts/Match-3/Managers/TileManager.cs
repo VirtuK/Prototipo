@@ -10,7 +10,7 @@ public class TileManager : MonoBehaviour
     public UIManager uiManager;
 
     [SerializeField] private GameObject pointsTextPrefab;
-    private List<GameObject> pointsText = new List<GameObject>();
+    [SerializeField] private List<GameObject> pointsText = new List<GameObject>();
 
     public Tile selectedTile;
 
@@ -19,11 +19,18 @@ public class TileManager : MonoBehaviour
         if (selectedTile == null)
         {
             selectedTile = tile;
+            selectedTile.HighlightSelect();
+        }
+        else if(selectedTile == tile)
+        {
+            selectedTile.ResetHighlight();
+            selectedTile = null;
         }
         else
         {
             if (GameUtilities.AreAdjacent(selectedTile, tile))
             {
+                selectedTile.ResetHighlight();
                 StartCoroutine(SwapAndCheck(selectedTile, tile));
             }
             selectedTile = null;
@@ -40,7 +47,7 @@ public class TileManager : MonoBehaviour
         }
         else
         {
-            HandleMatches();
+            StartCoroutine(HandleMatches());
         }
     }
 
@@ -102,9 +109,10 @@ public class TileManager : MonoBehaviour
         return CheckForMatches(boardManager.GetRows(), boardManager.width, boardManager.length);
     }
 
-    public void HandleMatches()
+    public IEnumerator HandleMatches()
     {
         ClearMatches();
+        yield return new WaitForSeconds(0.01f);
         ShiftTilesDown();
         RefillBoard();
     }
@@ -125,6 +133,7 @@ public class TileManager : MonoBehaviour
                         GameObject pt = Instantiate(pointsTextPrefab, tile.transform);
                         pt.GetComponent<TMP_Text>().text = "+" + tile.item.points;
                         pointsText.Add(pt);
+                        Debug.Log("Score created");
                     }
                     tile.item = null;
                     tile.icon.sprite = null;
@@ -200,7 +209,7 @@ public class TileManager : MonoBehaviour
 
         if (CheckForMatches())
         {
-            HandleMatches();
+            StartCoroutine(HandleMatches());
         }
     }
 
