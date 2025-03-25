@@ -72,4 +72,10 @@ public class Buttons : MonoBehaviour
     {
         customScore = int.Parse(scoreInput.text);
     }
+
+    //Fecha o Jogo
+    public void CloseGame()
+    {
+        Application.Quit();
+    }
 }
